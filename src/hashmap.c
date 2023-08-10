@@ -11,47 +11,63 @@ static unsigned int w_hm_hash(char *key) {
   return hash % HASHMAP_SIZE;
 }
 
-WHashMap *w_create_hm() {
-  WHashMap *map = (WHashMap *)malloc(sizeof(WHashMap));
-  memset(map->array, 0, sizeof(map->array));
-  return map;
+// pass in an array ptr of size (HASHMAP_SIZE * WHashMapValue).
+void w_create_hm(WHashMap dest) {
+  memset(dest, 0, sizeof(WHashMapValue) * HASHMAP_SIZE);
 }
 
-void w_free_hm(WHashMap *map) {
+void w_free_hm(WHashMap map) {
   for (int i = 0; i < HASHMAP_SIZE; i++) {
-    void *current = map->array[i];
-    if (current) {
-      free(current);
-      // don't need to NULL out the ptr, we're freeing the whole map?
-    }
+    WHashMapValue current = map[i];
+    // TODO:
+    // i actually have no idea how to do this. does there need to be seperate
+    // state in the map keeping track of which elements are pointers? we can't
+    // just free the random values.
+    //
+    // if (current) {
+    //   free(current);
+    // }
   }
   free(map);
 }
 
-void w_hm_put(WHashMap *map, char *key, void *value, int value_sz) {
+void w_hm_put_ptr_clone(WHashMap map, char *key, WHashMapValue value,
+                        int value_sz) {
   unsigned int index = w_hm_hash(key);
-  void *new_value = malloc(value_sz);
-  memcpy(new_value, value, value_sz);
-  map->array[index] = new_value;
+  WHashMapValue new_value = (WHashMapValue){.as_ptr = malloc(value_sz)};
+  memcpy(new_value.as_ptr, value.as_ptr, value_sz);
+  map[index] = new_value;
 }
 
-void w_hm_put_no_clone(WHashMap *map, char *key, void *value) {
+void w_hm_put_direct_value(WHashMap map, char *key, WHashMapValue value) {
   unsigned int index = w_hm_hash(key);
-  map->array[index] = value;
+  map[index] = value;
 }
 
-void *w_hm_get(WHashMap *map, char *key) {
+WHashMapValue w_hm_get(WHashMap map, char *key) {
   unsigned int index = w_hm_hash(key);
-  void *current = map->array[index];
+  WHashMapValue current = map[index];
   return current;
 }
 
-bool w_hm_delete(WHashMap *map, char *key) {
+bool w_hm_delete_ptr(WHashMap map, char *key) {
   unsigned int index = w_hm_hash(key);
-  void *current = map->array[index];
-  if (current) {
-    free(current);
-    map->array[index] = NULL;
+  WHashMapValue current = map[index];
+  if (current.as_ptr) { // if the value isn't all zero bits.
+    free(current.as_ptr);
+    (map[index]).as_ptr = NULL;
+    return true;
+  }
+  return false;
+}
+
+bool w_hm_delete_value(WHashMap map, char *key) {
+  unsigned int index = w_hm_hash(key);
+  WHashMapValue current = map[index];
+  // we still consider a zeroed out value to be blank in the hashtable. we just
+  // don't free() the value in this call.
+  if (current.as_ptr) { // if the value is all zero bits.
+    (map[index]).as_ptr = NULL;
     return true;
   }
   return false;

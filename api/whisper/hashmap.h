@@ -1,31 +1,35 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
+#include "whisper/value.h"
 #include <stdbool.h>
+#include <sys/types.h>
+
 #define HASHMAP_SIZE 1024
 
-// hold 64 bits of arbitrary data in each hashmap element for now.
-typedef void *WHashMapValue;
+typedef Value64 WHashMapValue;
 
-typedef struct WHashMap {
-  WHashMapValue *array[HASHMAP_SIZE];
-} WHashMap;
+typedef WHashMapValue WHashMap[HASHMAP_SIZE];
 
 /* either call this which zero-allocs it for you, or statically zero-alloc it
  yourself. we rely on pointers being NULL when they're not in use. */
-WHashMap *w_create_hm();
-void w_free_hm(WHashMap *map);
+void w_create_hm(WHashMap dest);
+void w_free_hm(WHashMap map);
 
 /* stick a bunch of bytes in the pointer, have the hashmap store a copy. */
-void w_hm_put(WHashMap *map, char *key, void *value, int value_sz);
+void w_hm_put_ptr_clone(WHashMap map, char *key, WHashMapValue value,
+                        int value_sz);
+/* store the actual value passed in. */
+void w_hm_put_direct_value(WHashMap map, char *key, WHashMapValue value);
 
-/* just stick the actual pointer in there, with no clone. significantly less
- safe. */
-void w_hm_put_no_clone(WHashMap *map, char *key, void *value);
+WHashMapValue w_hm_get(WHashMap map, char *key);
 
-void *w_hm_get(WHashMap *map, char *key);
+bool w_hm_delete_ptr(WHashMap map, char *key);
+bool w_hm_delete_value(WHashMap map, char *key);
+
+WHashMapValue w_hm_get(WHashMap map, char *key);
 
 /* return whether it was actually found and deleted or not. */
-bool w_hm_delete(WHashMap *map, char *key);
+bool w_hm_delete(WHashMap map, char *key);
 
 #endif
