@@ -17,19 +17,19 @@ void w_create_hm(WHashMap dest);
 void w_free_hm(WHashMap map);
 
 /* stick a bunch of bytes in the pointer, have the hashmap store a copy. */
-void w_hm_put_ptr_clone(WHashMap map, char *key, WHashMapValue value,
+void w_hm_put_ptr_clone(WHashMap map, const char *key, WHashMapValue value,
                         int value_sz);
 /* store the actual value passed in. */
-void w_hm_put_direct_value(WHashMap map, char *key, WHashMapValue value);
+void w_hm_put_direct_value(WHashMap map, const char *key, WHashMapValue value);
 
-WHashMapValue w_hm_get(WHashMap map, char *key);
+WHashMapValue w_hm_get(WHashMap map, const char *key);
 
-bool w_hm_delete_ptr(WHashMap map, char *key);
-bool w_hm_delete_value(WHashMap map, char *key);
+bool w_hm_delete_ptr(WHashMap map, const char *key);
+bool w_hm_delete_value(WHashMap map, const char *key);
 
-WHashMapValue w_hm_get(WHashMap map, char *key);
+WHashMapValue w_hm_get(WHashMap map, const char *key);
 
 /* return whether it was actually found and deleted or not. */
-bool w_hm_delete(WHashMap map, char *key);
+bool w_hm_delete(WHashMap map, const char *key);
 
 #endif

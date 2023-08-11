@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-static unsigned int w_hm_hash(char *key) {
+static unsigned int w_hm_hash(const char *key) {
   unsigned int hash = 0;
   while (*key) {
+    // const char * makes since, *key++ is modifying the copied pointer THEN
+    // dereffing.
     hash = (hash << 5) + *key++;
   }
   // bound the key in the actual hashing function.
@@ -31,7 +33,7 @@ void w_free_hm(WHashMap map) {
   free(map);
 }
 
-void w_hm_put_ptr_clone(WHashMap map, char *key, WHashMapValue value,
+void w_hm_put_ptr_clone(WHashMap map, const char *key, WHashMapValue value,
                         int value_sz) {
   unsigned int index = w_hm_hash(key);
   WHashMapValue new_value = (WHashMapValue){.as_ptr = malloc(value_sz)};
@@ -39,18 +41,18 @@ void w_hm_put_ptr_clone(WHashMap map, char *key, WHashMapValue value,
   map[index] = new_value;
 }
 
-void w_hm_put_direct_value(WHashMap map, char *key, WHashMapValue value) {
+void w_hm_put_direct_value(WHashMap map, const char *key, WHashMapValue value) {
   unsigned int index = w_hm_hash(key);
   map[index] = value;
 }
 
-WHashMapValue w_hm_get(WHashMap map, char *key) {
+WHashMapValue w_hm_get(WHashMap map, const char *key) {
   unsigned int index = w_hm_hash(key);
   WHashMapValue current = map[index];
   return current;
 }
 
-bool w_hm_delete_ptr(WHashMap map, char *key) {
+bool w_hm_delete_ptr(WHashMap map, const char *key) {
   unsigned int index = w_hm_hash(key);
   WHashMapValue current = map[index];
   if (current.as_ptr) { // if the value isn't all zero bits.
@@ -61,7 +63,7 @@ bool w_hm_delete_ptr(WHashMap map, char *key) {
   return false;
 }
 
-bool w_hm_delete_value(WHashMap map, char *key) {
+bool w_hm_delete_value(WHashMap map, const char *key) {
   unsigned int index = w_hm_hash(key);
   WHashMapValue current = map[index];
   // we still consider a zeroed out value to be blank in the hashtable. we just
