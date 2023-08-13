@@ -33,17 +33,20 @@ void w_free_hm(WHashMap map) {
   free(map);
 }
 
-void w_hm_put_ptr_clone(WHashMap map, const char *key, WHashMapValue value,
-                        int value_sz) {
+unsigned int w_hm_put_ptr_clone(WHashMap map, const char *key,
+                                WHashMapValue value, int value_sz) {
   unsigned int index = w_hm_hash(key);
   WHashMapValue new_value = (WHashMapValue){.as_ptr = malloc(value_sz)};
   memcpy(new_value.as_ptr, value.as_ptr, value_sz);
   map[index] = new_value;
+  return index;
 }
 
-void w_hm_put_direct_value(WHashMap map, const char *key, WHashMapValue value) {
+unsigned int w_hm_put_direct_value(WHashMap map, const char *key,
+                                   WHashMapValue value) {
   unsigned int index = w_hm_hash(key);
   map[index] = value;
+  return index;
 }
 
 WHashMapValue w_hm_get(WHashMap map, const char *key) {

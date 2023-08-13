@@ -16,11 +16,15 @@ typedef WHashMapValue WHashMap[HASHMAP_SIZE];
 void w_create_hm(WHashMap dest);
 void w_free_hm(WHashMap map);
 
+/* NOTE: all "put" methods return the index of the hashmap that the value was
+ * inserted into. */
+
 /* stick a bunch of bytes in the pointer, have the hashmap store a copy. */
-void w_hm_put_ptr_clone(WHashMap map, const char *key, WHashMapValue value,
-                        int value_sz);
+unsigned int w_hm_put_ptr_clone(WHashMap map, const char *key,
+                                WHashMapValue value, int value_sz);
 /* store the actual value passed in. */
-void w_hm_put_direct_value(WHashMap map, const char *key, WHashMapValue value);
+unsigned int w_hm_put_direct_value(WHashMap map, const char *key,
+                                   WHashMapValue value);
 
 WHashMapValue w_hm_get(WHashMap map, const char *key);
 
