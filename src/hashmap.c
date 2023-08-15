@@ -1,4 +1,5 @@
 #include "whisper/hashmap.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -38,6 +39,14 @@ unsigned int w_hm_put_ptr_clone(WHashMap map, const char *key,
   unsigned int index = w_hm_hash(key);
   WHashMapValue new_value = (WHashMapValue){.as_ptr = malloc(value_sz)};
   memcpy(new_value.as_ptr, value.as_ptr, value_sz);
+
+  if (map[index].as_ptr) {
+    fprintf(stderr,
+            "LIBWHISPER: The key %s is likely already in the hashtable. There "
+            "was probably a collision on the last %s() operation.\n",
+            key, __FUNCTION__);
+  }
+
   map[index] = new_value;
   return index;
 }
@@ -45,6 +54,14 @@ unsigned int w_hm_put_ptr_clone(WHashMap map, const char *key,
 unsigned int w_hm_put_direct_value(WHashMap map, const char *key,
                                    WHashMapValue value) {
   unsigned int index = w_hm_hash(key);
+
+  if (map[index].as_ptr) {
+    fprintf(stderr,
+            "LIBWHISPER: The key %s is likely already in the hashtable. There "
+            "was probably a collision on the last %s() operation.\n",
+            key, __FUNCTION__);
+  }
+
   map[index] = value;
   return index;
 }
