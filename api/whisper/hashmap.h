@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <sys/types.h>
 
-#define HASHMAP_SIZE 1024
+#define HASHMAP_SIZE 4096
 
 typedef Value64 WHashMapValue;
 
