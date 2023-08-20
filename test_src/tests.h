@@ -2,3 +2,4 @@
 
 void test_hm();
 void test_contig_array();
+void test_array();
