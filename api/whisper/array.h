@@ -7,13 +7,14 @@ typedef struct WArray {
   uint elm_sz;
   uint num_elms;
 
+  uint upper_bound; // so that we don't have to loop over the whole array and
+                    // check for NULLs in each blank spot, we keep an upper
+                    // bound. use this in for loop iterators.
+
   // the general purpose, dynamically allocated buffer for the internal array
   // data.
   void *buffer;
 } WArray;
-
-// apply a block to every element in the array.
-#define W_ARRAY_ITERATE(block)
 
 // allocate the buffer and fill the passed in WArray pointer.
 void w_make_array(WArray *warray, uint elm_sz, uint num_elms);

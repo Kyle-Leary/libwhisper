@@ -16,6 +16,9 @@ void w_make_array(WArray *warray, uint elm_sz, uint num_elms) {
   warray->num_elms = num_elms;
   warray->elm_sz = elm_sz;
   warray->full_elm_sz = warray->elm_sz + sizeof(ElementHeader);
+  warray->upper_bound =
+      0; // basically a psuedo-length for this array, even though it's not
+         // properly contiguous like the other ADT in this library.
 
   // then, setup the actual buffer.
   uint buf_sz = warray->full_elm_sz * warray->num_elms;
@@ -44,6 +47,12 @@ int w_array_insert(WArray *array, void *data) {
         memcpy(i_elm_ptr, &h, sizeof(ElementHeader));
         // bump past the header.
         i_elm_ptr += sizeof(ElementHeader);
+
+        if (i == array->upper_bound) {
+          // if we're inserting at the upper bound, we need to re-bump the upper
+          // bound.
+          array->upper_bound++;
+        }
       }
 
       // memcpy the pointer into the right slot.
@@ -66,6 +75,10 @@ int w_array_insert(WArray *array, void *data) {
 void w_array_delete_index(WArray *array, uint index) {
   uint index_elm_offset = array->full_elm_sz * index;
   uint8_t *index_elm_ptr = (uint8_t *)array->buffer + index_elm_offset;
+
+  if (index == array->upper_bound - 1) {
+    array->upper_bound--;
+  }
 
   memset(index_elm_ptr, 0, array->full_elm_sz);
 }

@@ -58,6 +58,7 @@ void test_array() {
   for (int i = 0; i < 5; i++) {
     int value = i * i;
     w_array_insert(&array, &value);
+    assert(array.upper_bound == (i + 1));
   }
   for (int i = 0; i < 5; i++) {
     int *value = (int *)w_array_get(&array, i);
@@ -68,6 +69,10 @@ void test_array() {
   w_array_delete_index(&array, 2);
   int *value_after_delete = (int *)w_array_get(&array, 2);
   assert(value_after_delete == NULL);
+
+  assert(array.upper_bound == 5);
+  w_array_delete_index(&array, 4);
+  assert(array.upper_bound == 4);
 
   // Test 4: Cleaning up
   w_clean_array(&array);
