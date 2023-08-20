@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
   TEST(hm)
   TEST(contig_array)
   TEST(array)
+  TEST(queue)
   printf("SUCCESSFULLY TESTED LIBWHISPER.\n");
   return 0;
 }
