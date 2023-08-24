@@ -17,10 +17,21 @@ void w_make_queue(WQueue *wqueue, uint elm_sz, uint num_elms) {
   wqueue->buffer = calloc(elm_sz, num_elms);
 }
 
-int w_enqueue(WQueue *queue, void *data) {
+void w_queue_save_state(WQueue *wqueue, WQueueSaveState *dest) {
+  dest->head_idx = wqueue->head_idx;
+  dest->rear_idx = wqueue->rear_idx;
+  dest->active_elements = wqueue->active_elements;
+}
+void w_queue_load_state(WQueue *wqueue, WQueueSaveState *from) {
+  wqueue->head_idx = from->head_idx;
+  wqueue->rear_idx = from->rear_idx;
+  wqueue->active_elements = from->active_elements;
+}
+
+void w_enqueue(WQueue *queue, void *data) {
   if (queue->active_elements == queue->num_elms) {
-    // no room.
-    return -1;
+    // dequeue to make more room.
+    w_dequeue(queue);
   }
 
   uint i_elm_offset = queue->elm_sz * queue->rear_idx;
@@ -33,8 +44,6 @@ int w_enqueue(WQueue *queue, void *data) {
 
   // memcpy the pointer into the right slot.
   { memcpy(i_elm_ptr, data, queue->elm_sz); }
-
-  return 0;
 }
 
 void *w_dequeue(WQueue *queue) {
