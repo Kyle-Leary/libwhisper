@@ -47,7 +47,8 @@ void w_enqueue(WQueue *queue, void *data) {
 }
 
 void *w_dequeue(WQueue *queue) {
-  if (queue->active_elements != 5 && queue->rear_idx == queue->head_idx) {
+  if (queue->active_elements != queue->num_elms &&
+      queue->rear_idx == queue->head_idx) {
     return NULL;
   }
 
