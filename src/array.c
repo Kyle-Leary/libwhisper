@@ -80,7 +80,43 @@ void w_array_delete_index(WArray *array, uint index) {
     array->upper_bound--;
   }
 
-  memset(index_elm_ptr, 0, array->full_elm_sz);
+  memset(index_elm_ptr, 0, sizeof(ElementHeader));
+}
+
+void w_array_insert_index(WArray *array, uint index, void *data) {
+  uint index_elm_offset = array->full_elm_sz * index;
+  uint8_t *index_elm_ptr = (uint8_t *)array->buffer + index_elm_offset;
+
+  ElementHeader h;
+  memcpy(&h, index_elm_ptr, sizeof(ElementHeader));
+  if (!(h.is_in_use)) {
+    // write the header in.
+    {
+      // update the header we already have stack allocated, and write that
+      // back into the buffer index base pointer.
+      h.is_in_use = 1;
+      memcpy(index_elm_ptr, &h, sizeof(ElementHeader));
+      // bump past the header.
+      index_elm_ptr += sizeof(ElementHeader);
+
+      if (index == array->upper_bound) {
+        // if we're inserting at the upper bound, we need to re-bump the upper
+        // bound.
+        array->upper_bound++;
+      }
+    }
+
+    // memcpy the pointer into the right slot.
+    { memcpy(index_elm_ptr, data, array->elm_sz); }
+  } else {
+    fprintf(stderr, "ERROR: Tried to write to an index in-use in %s.\n",
+            __PRETTY_FUNCTION__);
+    exit(1);
+  }
+
+  if (index == array->upper_bound - 1) {
+    array->upper_bound--;
+  }
 }
 
 void *w_array_get(WArray *array, uint index) {

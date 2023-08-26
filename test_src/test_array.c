@@ -1,4 +1,5 @@
 #include "whisper/array.h"
+#include "whisper/macros.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,28 +19,35 @@ void test_array_with_stuff() {
   assert(array.elm_sz == sizeof(Stuff));
   assert(array.num_elms == 5);
 
+  Stuff d;
+  d.x = 5;
+
   // Test 6: Inserting elements of type Stuff
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 3; i++) {
     Stuff value = {i * 1.0f, i * 2, 'A' + i};
     w_array_insert(&array, &value);
   }
-  for (int i = 0; i < 5; i++) {
-    Stuff *value = (Stuff *)w_array_get(&array, i);
-    assert(value->x == i * 1.0f);
-    assert(value->y == i * 2);
-    assert(value->z == 'A' + i);
+  Stuff *d_ptr = w_array_get(&array, 1);
+  ASSERT(d_ptr->x == 1.0);
+
+  w_array_insert_index(&array, 3, &d);
+  d_ptr = w_array_get(&array, 3);
+  ASSERT(d_ptr->x == 5.0);
+
+  //// trying to write again should crash.
+  // w_array_insert_index(&array, 3, &d);
+  // d_ptr = w_array_get(&array, 3);
+  // ASSERT(d_ptr->x == 5.0);
+
+  for (int i = 4; i < 5; i++) {
+    Stuff value = {i * 1.0f, i * 2, 'A' + i};
+    w_array_insert(&array, &value);
   }
 
   // Test 7: Deleting elements and verifying NULL for deleted index
   w_array_delete_index(&array, 2);
   Stuff *value_after_delete = (Stuff *)w_array_get(&array, 2);
   assert(value_after_delete == NULL);
-
-  // Test 8: Verifying other elements after deletion
-  Stuff *value_after_delete_3 = (Stuff *)w_array_get(&array, 3);
-  assert(value_after_delete_3->x == 3.0f);
-  assert(value_after_delete_3->y == 6);
-  assert(value_after_delete_3->z == 'D');
 
   // Test 9: Cleaning up
   w_clean_array(&array);

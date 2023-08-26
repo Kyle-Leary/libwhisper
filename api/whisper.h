@@ -2,6 +2,7 @@
 #define LIBWHISPER_H
 
 #include "whisper/array.h"
+#include "whisper/colmap.h"
 #include "whisper/contig_array.h"
 #include "whisper/hashmap.h"
 #include "whisper/queue.h"

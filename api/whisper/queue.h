@@ -40,4 +40,6 @@ void w_enqueue(WQueue *queue, void *data);
 // return NULL if there are no elements.
 void *w_dequeue(WQueue *queue);
 
+void w_dequeue_all(WQueue *queue);
+
 void w_clean_queue(WQueue *queue);

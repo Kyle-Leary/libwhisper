@@ -65,6 +65,14 @@ void *w_dequeue(WQueue *queue) {
   return index_elm_ptr;
 }
 
+// helper that pops through all the elements of the queue in a row.
+void w_dequeue_all(WQueue *queue) {
+  for (;;) {
+    if (w_dequeue(queue) == NULL)
+      break;
+  }
+}
+
 void w_clean_queue(WQueue *queue) {
   free(queue->buffer);
   queue->buffer = NULL;
