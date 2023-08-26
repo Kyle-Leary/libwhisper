@@ -22,8 +22,9 @@ void w_make_array(WArray *warray, uint elm_sz, uint num_elms);
 int w_array_insert(WArray *array, void *data);
 void w_array_delete_index(WArray *array, uint index);
 
-// this method will return a nonzero value when something is found in the slot.
-int w_array_insert_index(WArray *array, uint index, void *data);
+// returns NULL when something is already in the slot, and the pointer to the
+// element itself (past the header) when it's fresh.
+void *w_array_insert_index(WArray *array, uint index, void *data);
 
 // either return a pointer to the data in the buffer, or NULL if it doesn't
 // exist.

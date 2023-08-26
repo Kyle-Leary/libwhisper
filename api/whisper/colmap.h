@@ -16,7 +16,7 @@ void w_create_cm(WColMap *dest, int elm_sz, int map_sz);
 
 void w_free_cm(WColMap *map);
 
-int w_cm_insert(WColMap *map, const char *key, void *value);
+void *w_cm_insert(WColMap *map, const char *key, void *value);
 
 void *w_cm_get(WColMap *map, const char *key);
 
