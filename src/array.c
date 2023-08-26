@@ -83,7 +83,7 @@ void w_array_delete_index(WArray *array, uint index) {
   memset(index_elm_ptr, 0, sizeof(ElementHeader));
 }
 
-void w_array_insert_index(WArray *array, uint index, void *data) {
+int w_array_insert_index(WArray *array, uint index, void *data) {
   uint index_elm_offset = array->full_elm_sz * index;
   uint8_t *index_elm_ptr = (uint8_t *)array->buffer + index_elm_offset;
 
@@ -109,14 +109,14 @@ void w_array_insert_index(WArray *array, uint index, void *data) {
     // memcpy the pointer into the right slot.
     { memcpy(index_elm_ptr, data, array->elm_sz); }
   } else {
-    fprintf(stderr, "ERROR: Tried to write to an index in-use in %s.\n",
-            __PRETTY_FUNCTION__);
-    exit(1);
+    return 1;
   }
 
   if (index == array->upper_bound - 1) {
     array->upper_bound--;
   }
+
+  return 0;
 }
 
 void *w_array_get(WArray *array, uint index) {

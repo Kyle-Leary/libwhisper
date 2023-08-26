@@ -18,8 +18,8 @@ void w_create_cm(WColMap *dest, int elm_sz, int map_sz) {
 
 void w_free_cm(WColMap *map) { w_clean_array(map); }
 
-void w_cm_insert(WColMap *map, const char *key, void *value) {
-  w_array_insert_index(map, cmhash(key, map->num_elms), value);
+int w_cm_insert(WColMap *map, const char *key, void *value) {
+  return w_array_insert_index(map, cmhash(key, map->num_elms), value);
 }
 
 void *w_cm_get(WColMap *map, const char *key) {

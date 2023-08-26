@@ -22,8 +22,8 @@ void w_make_array(WArray *warray, uint elm_sz, uint num_elms);
 int w_array_insert(WArray *array, void *data);
 void w_array_delete_index(WArray *array, uint index);
 
-// this method will crash when called with an index that's already in use.
-void w_array_insert_index(WArray *array, uint index, void *data);
+// this method will return a nonzero value when something is found in the slot.
+int w_array_insert_index(WArray *array, uint index, void *data);
 
 // either return a pointer to the data in the buffer, or NULL if it doesn't
 // exist.
