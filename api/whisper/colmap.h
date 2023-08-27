@@ -6,7 +6,6 @@
  * */
 
 #include "whisper/array.h"
-#include "whisper/value.h"
 #include <stdbool.h>
 #include <sys/types.h>
 
@@ -17,6 +16,10 @@ void w_create_cm(WColMap *dest, int elm_sz, int map_sz);
 void w_free_cm(WColMap *map);
 
 void *w_cm_insert(WColMap *map, const char *key, void *value);
+
+// just return the slot without inserting. return NULL if there's already
+// something there. this marks the slot as "used" in the header.
+void *w_cm_return_slot(WColMap *map, const char *key);
 
 void *w_cm_get(WColMap *map, const char *key);
 

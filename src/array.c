@@ -1,4 +1,5 @@
 #include "whisper/array.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,7 +30,7 @@ void w_make_array(WArray *warray, uint elm_sz, uint num_elms) {
 
 // this is just a data copy. the buffer is flat, and there isn't a bunch of
 // misdirection.
-int w_array_insert(WArray *array, void *data) {
+void *w_array_insert(WArray *array, void *data) {
   // first, find a proper element.
   for (int i = 0; i < array->num_elms; i++) {
     uint i_elm_offset = array->full_elm_sz * i;
@@ -40,36 +41,48 @@ int w_array_insert(WArray *array, void *data) {
     memcpy(&h, i_elm_ptr, sizeof(ElementHeader));
     if (!(h.is_in_use)) {
       // write the header in.
-      {
-        // update the header we already have stack allocated, and write that
-        // back into the buffer index base pointer.
-        h.is_in_use = 1;
-        memcpy(i_elm_ptr, &h, sizeof(ElementHeader));
-        // bump past the header.
-        i_elm_ptr += sizeof(ElementHeader);
+      // update the header we already have stack allocated, and write that
+      // back into the buffer index base pointer.
+      h.is_in_use = 1;
+      memcpy(i_elm_ptr, &h, sizeof(ElementHeader));
+      // bump past the header.
+      i_elm_ptr += sizeof(ElementHeader);
 
-        if (i == array->upper_bound) {
-          // if we're inserting at the upper bound, we need to re-bump the upper
-          // bound.
-          array->upper_bound++;
-        }
+      if (i == array->upper_bound) {
+        // if we're inserting at the upper bound, we need to re-bump the upper
+        // bound.
+        array->upper_bound++;
       }
 
       // memcpy the pointer into the right slot.
-      { memcpy(i_elm_ptr, data, array->elm_sz); }
+      memcpy(i_elm_ptr, data, array->elm_sz);
 
-      return i;
+      // return the pointer to the element.
+      return i_elm_ptr;
     }
   }
 
-  // if we haven't found anything yet, that means we're out of room.
-  fprintf(stderr,
-          "Critical error: could not find a proper array index in w_array. "
-          "Returning -1... (%s)\n",
-          __FUNCTION__);
-  return -1;
-  // don't exit() since this is a library? how can we handle this error in a way
-  // that's neither annoying nor cryptic?
+  return NULL;
+}
+
+// this is basically an insertion function. we just don't insert anything,
+// instead giving the caller full reign over the pointer.
+void *w_array_get_slot_ptr(WArray *array, uint index) {
+  uint i_elm_offset =
+      array->full_elm_sz * index; // add OFFSET bytes to the base pointer.
+  uint8_t *i_elm_ptr = (uint8_t *)array->buffer + i_elm_offset;
+
+  ElementHeader h;
+  memcpy(&h, i_elm_ptr, sizeof(ElementHeader));
+  if (!(h.is_in_use)) {
+    // set it as used, we're taking this slot now.
+    h.is_in_use = true;
+    memcpy(i_elm_ptr, &h, sizeof(ElementHeader));
+    i_elm_ptr += sizeof(ElementHeader);
+    return i_elm_ptr; // return bumped pointer to the actual element.
+  } else {
+    return NULL;
+  }
 }
 
 void w_array_delete_index(WArray *array, uint index) {

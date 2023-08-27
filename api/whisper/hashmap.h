@@ -1,13 +1,20 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
-#include "whisper/value.h"
 #include <stdbool.h>
+#include <stdint.h>
 #include <sys/types.h>
 
 #define HASHMAP_SIZE 4096
 
-typedef Value64 WHashMapValue;
+typedef union WHashMapValue { // union is just a compiler-known way of "multiple
+                              // interpretations of the same data".
+  int as_int;
+  uint64_t as_uint;
+  char as_char;
+  double as_double;
+  void *as_ptr;
+} WHashMapValue;
 
 typedef WHashMapValue WHashMap[HASHMAP_SIZE];
 

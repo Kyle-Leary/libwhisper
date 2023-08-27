@@ -19,12 +19,19 @@ typedef struct WArray {
 // allocate the buffer and fill the passed in WArray pointer.
 void w_make_array(WArray *warray, uint elm_sz, uint num_elms);
 
-int w_array_insert(WArray *array, void *data);
+// return a pointer to the element, or NULL if we failed to insert.
+void *w_array_insert(WArray *array, void *data);
+
 void w_array_delete_index(WArray *array, uint index);
 
 // returns NULL when something is already in the slot, and the pointer to the
 // element itself (past the header) when it's fresh.
 void *w_array_insert_index(WArray *array, uint index, void *data);
+
+// just return the pointer to the slot with no checks. return NULL if there's
+// already something there. consume the slot and mark it as used if it's new
+// when we call this function.
+void *w_array_get_slot_ptr(WArray *array, uint index);
 
 // either return a pointer to the data in the buffer, or NULL if it doesn't
 // exist.
