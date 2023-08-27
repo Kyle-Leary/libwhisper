@@ -5,3 +5,4 @@ void test_cm();
 void test_contig_array();
 void test_array();
 void test_queue();
+void test_stack();

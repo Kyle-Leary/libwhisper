@@ -6,5 +6,6 @@
 #include "whisper/contig_array.h"
 #include "whisper/hashmap.h"
 #include "whisper/queue.h"
+#include "whisper/stack.h"
 
 #endif // LIBWHISPER_H
