@@ -26,7 +26,8 @@ build/
 *.out
 *.app
 *.elf
-wjsontest
+
+whispertest
 
 # IDE / editor specific files
 *.swp
