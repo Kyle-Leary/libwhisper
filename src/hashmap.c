@@ -31,7 +31,6 @@ void w_free_hm(WHashMap map) {
     //   free(current);
     // }
   }
-  free(map);
 }
 
 unsigned int w_hm_put_ptr_clone(WHashMap map, const char *key,

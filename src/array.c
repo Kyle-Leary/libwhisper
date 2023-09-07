@@ -96,12 +96,16 @@ void w_array_delete_index(WArray *array, uint index) {
   memset(index_elm_ptr, 0, sizeof(ElementHeader));
 }
 
-void w_array_delete_ptr(WArray *array, void *ptr) {
-  if (ptr == array->buffer + array->upper_bound - 1) {
+void w_array_delete_ptr(WArray *array, void *elm_ptr) {
+  if (elm_ptr == array->buffer +
+                     ((array->upper_bound - 1) * array->full_elm_sz) +
+                     sizeof(ElementHeader)) {
+    // deleting at the end of the array.
     array->upper_bound--;
   }
 
-  memset(ptr - sizeof(ElementHeader), 0, sizeof(ElementHeader));
+  // zero out the header, not the element itself.
+  memset(elm_ptr - sizeof(ElementHeader), 0, sizeof(ElementHeader));
 }
 
 void *w_array_insert_index(WArray *array, uint index, void *data) {
