@@ -28,7 +28,7 @@ void w_queue_load_state(WQueue *wqueue, WQueueSaveState *from) {
   wqueue->active_elements = from->active_elements;
 }
 
-void w_enqueue(WQueue *queue, void *data) {
+void *w_enqueue_alloc(WQueue *queue) {
   if (queue->active_elements == queue->num_elms) {
     // dequeue to make more room.
     w_dequeue(queue);
@@ -42,8 +42,14 @@ void w_enqueue(WQueue *queue, void *data) {
 
   queue->active_elements++;
 
-  // memcpy the pointer into the right slot.
-  { memcpy(i_elm_ptr, data, queue->elm_sz); }
+  return i_elm_ptr;
+}
+
+void w_enqueue(WQueue *queue, void *data) {
+  void *i_elm_ptr = w_enqueue_alloc(queue);
+
+  // then just memcpy the pointer into the right slot.
+  memcpy(i_elm_ptr, data, queue->elm_sz);
 }
 
 void *w_dequeue(WQueue *queue) {

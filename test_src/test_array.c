@@ -30,7 +30,7 @@ void test_array_with_stuff() {
   Stuff *d_ptr = w_array_get(&array, 1);
   ASSERT(d_ptr->x == 1.0);
 
-  w_array_insert_index(&array, 3, &d);
+  Stuff *slot_ptr = w_array_insert_index(&array, 3, &d);
   d_ptr = w_array_get(&array, 3);
   ASSERT(d_ptr->x == 5.0);
 
@@ -48,6 +48,13 @@ void test_array_with_stuff() {
   w_array_delete_index(&array, 2);
   Stuff *value_after_delete = (Stuff *)w_array_get(&array, 2);
   assert(value_after_delete == NULL);
+
+  {
+    // the third element that we got the pointer to should be deleted.
+    w_array_delete_ptr(&array, slot_ptr);
+    Stuff *value_after_delete = (Stuff *)w_array_get(&array, 3);
+    assert(value_after_delete == NULL);
+  }
 
   // Test 9: Cleaning up
   w_clean_array(&array);

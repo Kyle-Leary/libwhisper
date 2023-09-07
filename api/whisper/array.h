@@ -24,6 +24,8 @@ void *w_array_insert(WArray *array, void *data);
 
 void w_array_delete_index(WArray *array, uint index);
 
+void w_array_delete_ptr(WArray *array, void *elm_ptr);
+
 // returns NULL when something is already in the slot, and the pointer to the
 // element itself (past the header) when it's fresh.
 void *w_array_insert_index(WArray *array, uint index, void *data);

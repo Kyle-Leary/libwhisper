@@ -36,6 +36,10 @@ void w_queue_load_state(WQueue *wqueue, WQueueSaveState *from);
 // put into the back of the queue. if there's already something there,
 // dequeue that value and make room for more stuff.
 void w_enqueue(WQueue *queue, void *data);
+// just return the pointer to the slot, don't make the caller pass the data
+// up-front.
+void *w_enqueue_alloc(WQueue *queue);
+
 // pop from the head of the queue, return the pointer to the element.
 // return NULL if there are no elements.
 void *w_dequeue(WQueue *queue);
