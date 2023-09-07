@@ -23,6 +23,7 @@ void w_make_array(WArray *warray, uint elm_sz, uint num_elms);
 void *w_array_insert(WArray *array, void *data);
 
 void w_array_delete_index(WArray *array, uint index);
+void w_array_delete_ptr(WArray *array, void *ptr);
 
 // returns NULL when something is already in the slot, and the pointer to the
 // element itself (past the header) when it's fresh.
