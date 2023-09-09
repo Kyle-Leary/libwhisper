@@ -28,9 +28,7 @@ void w_make_array(WArray *warray, uint elm_sz, uint num_elms) {
   memset(warray->buffer, 0, buf_sz);
 }
 
-// this is just a data copy. the buffer is flat, and there isn't a bunch of
-// misdirection.
-void *w_array_insert(WArray *array, void *data) {
+void *w_array_alloc(WArray *array) {
   // first, find a proper element.
   for (int i = 0; i < array->num_elms; i++) {
     uint i_elm_offset = array->full_elm_sz * i;
@@ -54,15 +52,23 @@ void *w_array_insert(WArray *array, void *data) {
         array->upper_bound++;
       }
 
-      // memcpy the pointer into the right slot.
-      memcpy(i_elm_ptr, data, array->elm_sz);
-
       // return the pointer to the element.
       return i_elm_ptr;
     }
   }
 
   return NULL;
+}
+
+// this is just a data copy. the buffer is flat, and there isn't a bunch of
+// misdirection.
+void *w_array_insert(WArray *array, void *data) {
+  void *i_elm_ptr = w_array_alloc(array);
+
+  if (i_elm_ptr)
+    memcpy(i_elm_ptr, data, array->elm_sz);
+
+  return i_elm_ptr;
 }
 
 // this is basically an insertion function. we just don't insert anything,

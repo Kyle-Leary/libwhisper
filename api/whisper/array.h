@@ -21,6 +21,9 @@ void w_make_array(WArray *warray, uint elm_sz, uint num_elms);
 
 // return a pointer to the element, or NULL if we failed to insert.
 void *w_array_insert(WArray *array, void *data);
+// same as insert, just only allocate and let the caller figure out the memcpy
+// business.
+void *w_array_alloc(WArray *array);
 
 void w_array_delete_index(WArray *array, uint index);
 void w_array_delete_ptr(WArray *array, void *ptr);
