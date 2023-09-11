@@ -1,4 +1,5 @@
 #include "whisper/gap_buffer.h"
+#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,6 +17,26 @@ void w_gb_create(WGapBuf *l, int elm_sz, int num_elms, void *init_value) {
   l->buffer = calloc(elm_sz, num_elms);
   memcpy(&l->buffer[0], init_value, l->elm_sz);
   l->gap_start = 1; // starts at the first index.
+  l->gap_end =
+      l->num_elms - 1; // the end of the gap is the last index in the buffer.
+}
+
+void w_gb_create_from_block(WGapBuf *l, int elm_sz, int num_elms,
+                            void *init_values_base, int num_init_values) {
+  assert((num_init_values < num_elms) &&
+         "Your initialization block is too big, either init with "
+         "less values or increase the size of the gap buffer.");
+  assert((num_init_values > 0) &&
+         "You must init the gap buffer with at least one value.");
+
+  l->elm_sz = elm_sz;
+  l->num_elms = num_elms;
+  l->buffer = calloc(elm_sz, num_elms);
+  // all pushed into the left of the gap, so the gap_end doesn't move at all.
+  // the cursor should point to the end of the string. call the shift to
+  // beginning function if you want the cursor at the beginning of the line.
+  memcpy(&l->buffer[0], init_values_base, num_init_values * elm_sz);
+  l->gap_start = num_init_values; // starts at the first index.
   l->gap_end =
       l->num_elms - 1; // the end of the gap is the last index in the buffer.
 }
@@ -114,6 +135,19 @@ void w_gb_delete(WGapBuf *l) {
 
   l->gap_start--;
   memset(&l->buffer[l->gap_start], 0, l->elm_sz);
+}
+
+void w_gb_delete_after_cursor(WGapBuf *l) {
+  if (l->gap_start == l->num_elms - 1) {
+    // we cannot remove another without nullifying the cursor.
+    return;
+  }
+
+  int elms_left =
+      w_gb_get_length(l) - l->gap_start; // length minus the pre-gap length.
+
+  l->gap_end += elms_left;
+  memset(&l->buffer[l->gap_end + 1], 0, l->elm_sz * elms_left);
 }
 
 #define RED "\033[31m"

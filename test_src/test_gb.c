@@ -68,6 +68,11 @@ void test_shift_left_right() {
   w_gb_shift_to(&gb, w_gb_get_length(&gb) - 1);
   ASSERT(gb.gap_start == w_gb_get_length(&gb));
 
+  w_gb_shift_to(&gb, 3);
+  w_gb_debug_print(&gb, 10);
+  w_gb_delete_after_cursor(&gb);
+  w_gb_debug_print(&gb, 10);
+
   w_gb_free(&gb);
 }
 
