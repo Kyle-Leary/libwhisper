@@ -121,25 +121,23 @@ void *w_array_insert_index(WArray *array, uint index, void *data) {
   ElementHeader h;
   memcpy(&h, index_elm_ptr, sizeof(ElementHeader));
   if (!(h.is_in_use)) {
-    // write the header in.
-    {
-      // update the header we already have stack allocated, and write that
-      // back into the buffer index base pointer.
-      h.is_in_use = 1;
-      memcpy(index_elm_ptr, &h, sizeof(ElementHeader));
-      // bump past the header.
-      index_elm_ptr += sizeof(ElementHeader);
+    // update the header we already have stack allocated, and write that
+    // back into the buffer index base pointer.
+    h.is_in_use = 1;
+    memcpy(index_elm_ptr, &h, sizeof(ElementHeader));
+    // bump past the header.
+    index_elm_ptr += sizeof(ElementHeader);
 
-      if (index == array->upper_bound) {
-        // if we're inserting at the upper bound, we need to re-bump the upper
-        // bound.
-        array->upper_bound++;
-      }
+    if (index == array->upper_bound) {
+      // if we're inserting at the upper bound, we need to re-bump the upper
+      // bound.
+      array->upper_bound++;
     }
 
     // memcpy the pointer into the right slot.
-    { memcpy(index_elm_ptr, data, array->elm_sz); }
+    memcpy(index_elm_ptr, data, array->elm_sz);
 
+    // return the BUMPED pointer.
     return index_elm_ptr;
   } else {
     return NULL;

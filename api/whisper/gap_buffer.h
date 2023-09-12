@@ -34,6 +34,9 @@ int w_gb_shift_right(WGapBuf *l);
 void w_gb_go_to_beginning(WGapBuf *l);
 void w_gb_go_to_end(WGapBuf *l);
 
+int w_gb_get_length_before_gap(WGapBuf *l);
+int w_gb_get_length_after_gap(WGapBuf *l);
+
 void w_gb_shift_by(WGapBuf *l, int by);
 
 void w_gb_shift_to(WGapBuf *l, int index);
@@ -44,7 +47,7 @@ void w_gb_insert(WGapBuf *l, void *value);
 void *w_gb_insert_grab(WGapBuf *l);
 
 // delete at gap/cursor implicitly.
-void w_gb_delete(WGapBuf *l);
+int w_gb_delete(WGapBuf *l);
 
 // everything after the cursor is deleted, so basically removing every element
 // after the gap.

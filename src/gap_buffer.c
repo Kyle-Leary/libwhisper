@@ -65,7 +65,7 @@ int w_gb_shift_left(WGapBuf *l) {
 
 // move a character from the right buffer into the left buffer.
 int w_gb_shift_right(WGapBuf *l) {
-  if (l->gap_end >= l->num_elms - 1) {
+  if (l->gap_end >= l->num_elms) {
     return 1;
   }
 
@@ -114,7 +114,9 @@ void w_gb_insert(WGapBuf *l, void *value) {
   if (l->gap_start == l->gap_end)
     return;
 
-  memcpy(&l->buffer[l->gap_start], value, l->elm_sz);
+  // copy the cursor up
+  memcpy(&l->buffer[l->gap_start], &l->buffer[l->gap_start - 1], l->elm_sz);
+  memcpy(&l->buffer[l->gap_start - 1], value, l->elm_sz);
   l->gap_start++;
 }
 
@@ -127,14 +129,28 @@ void *w_gb_insert_grab(WGapBuf *l) {
   return pos;
 }
 
-void w_gb_delete(WGapBuf *l) {
+int w_gb_delete(WGapBuf *l) {
   if (l->gap_start == 1) {
-    // we cannot remove another without nullifying the cursor.
-    return;
+    // steal one from the right buffer.
+    if (l->gap_end == l->num_elms - 1) {
+      // we cannot remove another without nullifying the cursor.
+      return -1;
+    }
+    memcpy(&l->buffer[l->gap_start - 1], &l->buffer[l->gap_end + 1], l->elm_sz);
+    l->gap_end++;
+  } else {
+    // just decrement the lower buffer.
+    l->gap_start--;
+    memset(&l->buffer[l->gap_start], 0, l->elm_sz);
   }
 
-  l->gap_start--;
-  memset(&l->buffer[l->gap_start], 0, l->elm_sz);
+  return 0;
+}
+
+int w_gb_get_length_before_gap(WGapBuf *l) { return l->gap_start; }
+
+int w_gb_get_length_after_gap(WGapBuf *l) {
+  return (l->num_elms - (l->gap_end + 1));
 }
 
 void w_gb_delete_after_cursor(WGapBuf *l) {
@@ -143,8 +159,7 @@ void w_gb_delete_after_cursor(WGapBuf *l) {
     return;
   }
 
-  int elms_left =
-      w_gb_get_length(l) - l->gap_start; // length minus the pre-gap length.
+  int elms_left = w_gb_get_length_after_gap(l) - 1; // minus the end value.
 
   l->gap_end += elms_left;
   memset(&l->buffer[l->gap_end + 1], 0, l->elm_sz * elms_left);
