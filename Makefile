@@ -14,8 +14,11 @@ SRCS := $(shell find $(SRC_DIR) -type f -name "*.c")
 TEST_SRCS := $(shell find $(TEST_SRC_DIR) -type f -name "*.c") 
 OBJS = $(SRCS:.c=.o)
 
-all: clean $(TARGET)
+all: notify clean $(TARGET)
 	@echo  Successfully created the library at $(TARGET).
+
+notify: 
+	@echo STARTING UP LIBWHISPER BUILD...
 
 test: clean $(TEST_TARGET)
 	@echo  Successfully created the test at $(TEST_TARGET). Running tests...

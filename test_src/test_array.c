@@ -19,6 +19,13 @@ void test_array_with_stuff() {
   assert(array.elm_sz == sizeof(Stuff));
   assert(array.num_elms == 5);
 
+  void *xyz = w_array_alloc(&array);
+  void *foo = w_array_alloc(&array);
+  assert(xyz != foo);
+
+  w_array_delete_ptr(&array, xyz);
+  w_array_delete_ptr(&array, foo);
+
   Stuff d;
   d.x = 5;
 

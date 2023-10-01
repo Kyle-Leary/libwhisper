@@ -1,8 +1,10 @@
 #pragma once
 
+#include <stdbool.h>
+
 // simple stack that pushes up and pops down.
 
-#include <sys/types.h>
+typedef unsigned int uint;
 
 typedef struct WStack {
   uint elm_sz;
@@ -17,6 +19,9 @@ typedef struct WStack {
 
 void w_stack_create(WStack *stack, uint elm_sz, uint num_elms);
 
+void *w_stack_get_curr(WStack *stack);
+bool w_stack_at_bottom(WStack *stack);
+
 // return either the value or NULL if we're at the bottom of the stack.
 void *w_stack_pop(WStack *stack);
 
@@ -30,3 +35,5 @@ void w_stack_pop_all(WStack *stack);
 void w_stack_clean(WStack *stack);
 
 void w_stack_debug_print(WStack *stack);
+
+void *w_stack_get_curr(WStack *stack);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <sys/types.h>
+typedef unsigned int uint;
 
 typedef struct WArray {
   uint full_elm_sz; // the elm sz passed in plus the sizeof the element header.

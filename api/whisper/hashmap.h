@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <sys/types.h>
 
 #define HASHMAP_SIZE 4096
 

@@ -7,7 +7,7 @@
 
 #include "whisper/array.h"
 #include <stdbool.h>
-#include <sys/types.h>
+typedef unsigned int uint;
 
 typedef WArray WColMap;
 

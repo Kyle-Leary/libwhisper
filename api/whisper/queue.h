@@ -1,6 +1,6 @@
 #pragma once
 
-#include <sys/types.h>
+typedef unsigned int uint;
 
 // a simple generic queue implemented over a ring buffer.
 

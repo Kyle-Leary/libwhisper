@@ -17,6 +17,17 @@ void w_stack_create(WStack *stack, uint elm_sz, uint num_elms) {
   stack->elm_sz = elm_sz;
 }
 
+bool w_stack_at_bottom(WStack *stack) {
+  return (stack->stack_pointer == stack->base_pointer);
+}
+
+void *w_stack_get_curr(WStack *stack) {
+  if (stack->stack_pointer <= stack->base_pointer) {
+    return NULL;
+  }
+  return stack->stack_pointer - stack->elm_sz;
+}
+
 void *w_stack_pop(WStack *stack) {
   if (stack->stack_pointer == stack->base_pointer) {
     return NULL;
